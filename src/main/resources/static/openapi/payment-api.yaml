@@ -1,0 +1,224 @@
+openapi: 3.0.3
+
+info:
+  title: Payment Initiation API
+  version: 1.0.0
+  description: Payment Order service aligned with provided Postman collection and BIAN terminology.
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: PaymentInitiation
+    description: Payment order lifecycle operations
+
+paths:
+
+  /payment-initiation/payment-orders:
+    post:
+      tags:
+        - PaymentInitiation
+      summary: Initiate Payment Order
+      operationId: createPaymentOrder
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentOrderRequest'
+
+      responses:
+        '201':
+          description: Payment order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePaymentOrderResponse'
+
+        '400':
+          description: Invalid request
+
+        '500':
+          description: Internal server error
+
+  /payment-initiation/payment-orders/{paymentOrderId}:
+    get:
+      tags:
+        - PaymentInitiation
+      summary: Retrieve Payment Order
+      operationId: getPaymentOrder
+
+      parameters:
+        - name: paymentOrderId
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Payment order found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatePaymentOrderResponse'
+
+        '404':
+          description: Payment order not found
+
+        '500':
+          description: Internal server error
+
+  /payment-initiation/payment-orders/{paymentOrderId}/status:
+    get:
+      tags:
+        - PaymentInitiation
+      summary: Retrieve Payment Order Status
+      operationId: getPaymentOrderStatus
+
+      parameters:
+        - name: paymentOrderId
+          in: path
+          required: true
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: Payment order status found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentStatusResponse'
+
+        '404':
+          description: Payment order not found
+
+        '500':
+          description: Internal server error
+
+components:
+
+  schemas:
+
+    CreatePaymentOrderRequest:
+      type: object
+      required:
+        - externalReference
+        - debtorAccount
+        - creditorAccount
+        - instructedAmount
+        - requestedExecutionDate
+
+      properties:
+        externalReference:
+          type: string
+          example: EXT-1
+
+        debtorAccount:
+          $ref: '#/components/schemas/Account'
+
+        creditorAccount:
+          $ref: '#/components/schemas/Account'
+
+        instructedAmount:
+          $ref: '#/components/schemas/InstructedAmount'
+
+        remittanceInformation:
+          type: string
+          example: Factura 001-123
+
+        requestedExecutionDate:
+          type: string
+          format: date
+
+    CreatePaymentOrderResponse:
+      type: object
+      properties:
+        paymentOrderId:
+          type: string
+          example: PO-0001
+
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+
+    PaymentOrder:
+      type: object
+      properties:
+        paymentOrderId:
+          type: string
+
+        externalReference:
+          type: string
+
+        debtorAccount:
+          $ref: '#/components/schemas/Account'
+
+        creditorAccount:
+          $ref: '#/components/schemas/Account'
+
+        instructedAmount:
+          $ref: '#/components/schemas/InstructedAmount'
+
+        remittanceInformation:
+          type: string
+
+        requestedExecutionDate:
+          type: string
+          format: date
+
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+
+        lastUpdate:
+          type: string
+          format: date-time
+
+    PaymentStatusResponse:
+      type: object
+      properties:
+        paymentOrderId:
+          type: string
+
+        status:
+          $ref: '#/components/schemas/PaymentStatus'
+
+        lastUpdate:
+          type: string
+          format: date-time
+
+    Account:
+      type: object
+      required:
+        - iban
+      properties:
+        iban:
+          type: string
+          example: EC12DEBTOR
+
+    InstructedAmount:
+      type: object
+      required:
+        - amount
+        - currency
+      properties:
+        amount:
+          type: number
+          format: double
+          example: 150.75
+
+        currency:
+          type: string
+          minLength: 3
+          maxLength: 3
+          example: USD
+
+    PaymentStatus:
+      type: string
+      enum:
+        - INITIATED
+        - VALIDATED
+        - PROCESSING
+        - COMPLETED
+        - REJECTED

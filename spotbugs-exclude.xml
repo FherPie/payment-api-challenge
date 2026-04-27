@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <Match>
+        <Class name="~com\.andres\.generated\..*"/>
+    </Match>
+    <Match>
+        <Class name="~.*Application"/>
+    </Match>
+
+    <Match>
+        <Class name="~com\.andres\.banking\.config\..*"/>
+    </Match>
+</FindBugsFilter>
