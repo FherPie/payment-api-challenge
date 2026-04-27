@@ -1,6 +1,6 @@
 # Migración de Servicios Web legados SOAP hacia REST
 
-## 1. Problema
+# 1. Problema
 Este proyecto es la migración servicios web SOAP que manejan creación y consulta de ordenes de pagos dentro de una institución 
 bancaria lo cual están alineada a BIAN hacia REST con Spring Boot +3, Maven 3.9.14, Java 17, OPEN API 3.0 y Docker. 
 
